@@ -2,7 +2,7 @@
 
 ## 使用方法
 
-### 添加 Nginx conf 参数 autoindex
+### 在对应 `server` 段的 `conf` 文件中，添加 `autoindex` 参数 
 ```
 server {	
     listen			80;
