@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<title>/</title>
+
+<style>
+
+body,h1,h2,h3,h4,h5,h6,p,form,ol,ul{margin:0;}
+ol,ul{padding:0;}
+html{
+	font:1em Arial,sans-serif;
+	color:#2d3033;
+}
+
+a{color:#06F;text-decoration:none;}
+
+nav{
+	padding:0 .6em;
+	line-height:50px;
+	overflow: hidden;
+}
+nav a{
+	float:left;
+}
+nav a:after{
+	content:'/';
+	opacity:.5;
+	padding:0 .2em;
+}
+.文件列表{
+	
+}
+.文件列表 a{
+	display:block;
+	padding:0 .6em;
+	line-height:2;
+}
+.文件列表 a:hover{
+	background:#EEE;
+}
+.文件列表 a[data-type="directory"]{
+	color:#F70;
+}
+.文件列表 a b{
+	margin-right:.3em;
+}
+.文件列表 a time{
+	font-size:.8em;
+	opacity:.5;
+	margin-right:.3em;
+}
+.文件列表 a cite{
+	font-size:.8em;
+	font-style:normal;
+	opacity:.5;
+}
+</style>
+
+<div id="M">
+	<nav>
+		<a href="#/">/</a>
+	</nav>
+	<div class="body">
+		
+	</div>
+</div>
+
+
+
+<script>//templet.js
+(function(上帝){
+	var 
+	需编码字串表={
+		'&':'&amp;',
+		'<':'&lt;',
+		'>':'&gt;',
+		'"':'&quot;',
+		"'":'&#39;',
+		'/':'&#x2F;',
+		'`':'&#x60;',
+		'=':'&#x3D;'
+	},
+	编码成文本=function(string){
+		return String(string).replace(/[&<>"'`=\/]/g,function(s){
+			return 需编码字串表[s];
+		}).replace(/\n\r/g,function(s){
+			return '\\n';
+		})
+	},
+	编码成网页=function(string){
+		return String(string);
+		return String(string).replace(/"/g,function(s){
+			return '\\'+s;
+		});
+	}, 
+	编译模板=function(模板字串){
+		var 
+		已打开的钥匙们=[],
+		钥匙前缀们='_',
+		模板字串=模板字串
+			.replace(/[\n\r\t]/g,'')
+			.replace(/"/g,'\\"')
+			.replace(/\{\{(#|\/|\^|&|\$)?(.+?)\}\}/g,function(整段文字,动作,管道){
+
+
+
+
+
+			if(管道=='.')
+				管道='_循环关键字';
+
+
+			
+			管道=管道.split('|');
+
+			钥匙=管道.shift();
+
+			var 
+			管道前,
+			管道后,
+			钥匙和管道;
+
+			管道前=管道.reverse().join('(')+'(';
+
+			管道后=[];
+			管道后.length=管道.length;
+			管道后=管道后.join(')')+')';
+
+			钥匙和管道=管道前+钥匙+管道后;
+
+
+
+			钥匙前缀们=[];
+			钥匙前缀们.length=已打开的钥匙们.length+3;
+			钥匙前缀们=钥匙前缀们.join('_');
+
+
+			switch(动作){
+				case '#':
+					已打开的钥匙们.push(钥匙);
+
+					return '");\
+					(function(){\
+						var '+钥匙前缀们+'value;\
+						var '+钥匙前缀们+'key;\
+						if( typeof('+钥匙+')!=="undefined" && ('+钥匙+') && ('+钥匙+'='+钥匙和管道+'))\
+						for('+钥匙前缀们+'key in '+钥匙+')\
+						with('+钥匙前缀们+'value='+钥匙+'['+钥匙前缀们+'key]){\
+							var _钥匙='+钥匙前缀们+'key;\
+							var _循环关键字='+钥匙前缀们+'value;\
+							$return.push("';
+
+					break;
+				case '$':
+					已打开的钥匙们.push(钥匙);
+
+					return '");\
+					(function(){\
+						if( typeof('+钥匙+')!=="undefined" && ('+钥匙+') ){\
+							$return.push("';
+				
+					break;
+				case '^':
+					已打开的钥匙们.push(钥匙);
+
+					return '");\
+					(function(){\
+						if( typeof('+钥匙+')==="undefined" || !('+钥匙+') ){\
+							$return.push("';
+				
+					break;
+				case '/':
+					var 
+					长度=已打开的钥匙们.length+1;
+					while(已打开的钥匙们[--长度]&&已打开的钥匙们[长度]!=钥匙);
+					
+					已打开的钥匙们.splice(长度,1);
+
+					return '")\
+						}\
+					})();\
+					$return.push("';
+				
+					break;
+				case '&':
+
+					return '");\
+						if(typeof('+钥匙+')!=="undefined")\
+							$return.push(编码成网页('+钥匙和管道+'||\'\'));\
+						\
+						$return.push("';
+
+					break;
+				default:
+
+					return '");\
+						if(typeof('+钥匙+')!=="undefined")\
+							$return.push(编码成文本('+钥匙和管道+'||\'\'));\
+						\
+						$return.push("';
+
+					break;
+			}
+
+		});
+
+		模板字串='\
+			var $return=[];\
+			var _value=$data;\
+			var _key;\
+			with($data){\
+				$return.push("'+模板字串+'");\
+			}\
+			return $return.join(\'\');';
+			
+		return Function('$data','编码成文本','编码成网页',模板字串);
+	},
+	运转=function(模板字串,数据,作用域){
+		//console.log(编译模板(模板字串));
+
+		return 编译模板(模板字串).call(作用域||上帝,数据,编码成文本,编码成网页);
+	};
+	
+	上帝.模板={
+		运转:运转,
+		编译模板:编译模板,
+		编码成文本:编码成文本,
+		编码成网页:编码成网页,
+	};
+})(this);
+</script>
+<script>
+var 
+toArr=function(r){
+	return Array.prototype.slice.apply(r);
+},
+_=function(selector,pa){
+	return (pa||document).querySelector(selector);
+},
+__=function(selectors,pa){
+	return toArr((pa||document).querySelectorAll(selectors));
+};
+
+Element.prototype._=function(selector){
+	return _(selector,this);
+};
+Element.prototype.__=function(selectors){
+	return __(selectors,this);
+};
+
+var 
+en=encodeURIComponent,
+de=function(text){
+	try{
+		return decodeURIComponent(text);
+	}catch(e){};
+	return text;
+};
+
+
+var 
+文件列表模板=`
+<div class="文件列表">
+	{{#fileslist}}
+	{{$type=='file'}}
+		<a href="{{path}}{{name|en}}" data-type="{{type}}">
+			<b>{{name}}</b>
+			<time>{{mtime}}</time>
+			<cite>{{size}}</cite>
+		</a>
+	{{/type=='file'}}
+	{{$type=='directory'}}
+		<a href="#{{path}}{{name}}" data-type="{{type}}">
+			<b>{{name}}</b>
+			<time>{{mtime}}</time>
+		</a>
+	{{/type=='directory'}}
+	{{/fileslist}}
+</div>
+`;
+
+var 
+get=function(url,func){
+	var 
+	x=new XMLHttpRequest();
+	x.open('GET',url);
+
+	x.onload=function(){
+		var 
+		r=x.response;
+
+		var 
+		contentType=x.getResponseHeader('Content-Type');
+
+		if(contentType.match(/json/i)){
+			try{
+				r=JSON.parse(r);
+			}catch(e){}
+		}
+		func(r);
+	}
+	x.send();
+},
+文件列表过滤=function(data){
+	return !data.name.match(/^\$|^(System Volume Information|BaiduNetdiskDownload|H)$|\.(log|torrent|cfg|115chrome[_\w]+)$/i);
+},
+文件目录导航=function(path){
+	path=path.replace(/^\/|\/$/ig,'');
+
+	if(!path)
+		path=[];
+	else
+		path=path.split('/').map(de);
+
+	// path.unshift('/');
+
+	var 
+	history=[];
+
+	M._('nav').innerHTML='<a href="#/"></a>'+path.map(function(name){
+		history.push(name);
+
+		return '<a href="#/'+history.map(en).join('/')+'">'+de(name)+'</a>';
+	}).join('');
+}
+onhashchange=function(){
+	var 
+	hash=location.hash.substr(1);
+
+	if(!hash){
+		hash='/';
+	}
+
+	var 
+	path=hash;
+
+	if(!path.match(/\/$/)){
+		path+='/';
+	}
+
+	文件目录导航(path);
+
+	path=path.split('/').map(en).join('/');
+
+	get(path,function(fileslist){
+		M._('.body').innerHTML=模板.运转(文件列表模板,{
+			path:path,
+			fileslist:fileslist.filter(文件列表过滤)
+		});
+	});
+};
+
+onhashchange();
+</script>
