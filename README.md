@@ -9,10 +9,10 @@ server {
 	server_name  	test.com;
 	root			/path/;
 
-	autoindex 						on;							# 显示目录
-	autoindex_format				json;						# JSON 形式返回目录结构
-	autoindex_exact_size 			on;							# 显示文件大小
-	autoindex_localtime 			on;							# 显示文件时间
+	autoindex                  on;    # 显示目录
+	autoindex_format         json;    # JSON 形式返回目录结构
+	autoindex_exact_size       on;    # 显示文件大小
+	autoindex_localtime        on;    # 显示文件时间
 }
 
 ```
