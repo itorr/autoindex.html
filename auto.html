@@ -339,7 +339,7 @@ onhashchange=function(){
 
 	文件目录导航(path);
 
-	path=path.split('/').map(en).join('/');
+	path=path.split('/').map(de).map(en).join('/');
 
 	get(path,function(fileslist){
 		M._('.body').innerHTML=模板.运转(文件列表模板,{
