@@ -41,7 +41,7 @@ nav a:after{
 	color:#F70;
 }
 .文件列表 a b{
-	margin-right:.3em;
+	margin-right:.5em;
 }
 .文件列表 a time{
 	font-size:.8em;
@@ -264,14 +264,14 @@ var
 	{{$type=='file'}}
 		<a href="{{path}}{{name|en}}" data-type="{{type}}">
 			<b>{{name}}</b>
-			<time>{{mtime}}</time>
+			<time>{{mtime|时间格式化}}</time>
 			<cite>{{size}}</cite>
 		</a>
 	{{/type=='file'}}
 	{{$type=='directory'}}
 		<a href="#{{path}}{{name}}" data-type="{{type}}">
 			<b>{{name}}</b>
-			<time>{{mtime}}</time>
+			<time>{{mtime|时间格式化}}</time>
 		</a>
 	{{/type=='directory'}}
 	{{/fileslist}}
@@ -300,6 +300,39 @@ get=function(url,func){
 	}
 	x.send();
 },
+时间格式化=function(unix){
+	var
+	e=unix,
+	h=new Date(),
+	d;
+
+	if((e+'').match(/^\d{13}$/)){
+		d=new Date(e);
+	}else if((e+'').match(/^\d{10}$/)){
+		d=new Date(e*1000);
+	}else if((e+'').match(/^\d{0,9}$/)){
+		return '∞';
+	}else if((e+'').match(/GMT$/)){
+		d=new Date(e);
+	}else{
+		var arr=(e+'').split(/[-\/ :]/);
+		d=new Date(arr[0], arr[1]-1, arr[2], arr[3], arr[4], arr[5]);
+	}
+
+	var
+	g=parseInt,
+	f=g((h-d)/1000);
+
+	return !e||f<0?'刚刚':
+	f<60?(f+'秒前'):
+	(f/=60)<60?g(f)+'分前':
+	(f/=60)<24?g(f)+'时前':
+	(f/=24)<7?g(f)+'天前':
+	(f/=7)<2?g(f)+'周前':
+	d>new Date(h.getFullYear()+'-01-01')?(d.getMonth()+1)+'月'+d.getDate()+'日':
+	d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日';
+},
+
 文件列表过滤=function(data){
 	return !data.name.match(/^\$|^(System Volume Information|BaiduNetdiskDownload|H)$|\.(log|torrent|cfg|115chrome[_\w]+)$/i);
 },
