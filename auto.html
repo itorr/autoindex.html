@@ -293,11 +293,11 @@ get=function(url,func){
 		var 
 		contentType=x.getResponseHeader('Content-Type');
 
-		if(contentType.match(/json/i)){
+		//if(contentType.match(/json/i)){
 			try{
 				r=JSON.parse(r);
 			}catch(e){}
-		}
+		//}
 		func(r);
 	}
 	x.send();
